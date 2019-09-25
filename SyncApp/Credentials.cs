@@ -2,13 +2,7 @@
 
 public class Credentials
 {
-
-    public string username;
-    public string password;
-
-    public Credentials(string username, string password)
-    {
-        this.username = username;
-        this.password = password;
-    }
+    public int Id { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
 }

@@ -13,24 +13,24 @@ public class SyncApplication
         using (var db = new LiteDatabase(@"E:\Creds.db"))
         {
 
-        // Authentication
+            // Authentication
+            int loginAttempts = 0;
+            for (int i = 0; loginAttempts < 3; i++)
+            {
+                Console.WriteLine("Welcome. Please enter your username.");
+                string username = Console.ReadLine();
+                var users = db.GetCollection<Credentials>("users");
+                users.EnsureIndex(x => x.Username);
+                var uResults = users.FindOne(x => x.Username == username);
 
-        log:
-            Console.WriteLine("Welcome. Please enter your username.");
-            string username = Console.ReadLine();
-            var users = db.GetCollection<Credentials>("users");
-            users.EnsureIndex(x => x.Username);
-            var uResults = users.FindOne(x => x.Username == username);
-
-            if (uResults != null)
+                if (uResults != null)
                 {
-                Console.WriteLine($"Welcome back {username}!");
+                    Console.WriteLine($"Welcome back {username}!");
 
-                pw:
                     Console.WriteLine("Please enter your password.");
                     string password = Console.ReadLine();
                     bool authentic = PasswordHash.ValidatePassword(password, uResults.Password);
-                    if (authentic == true) 
+                    if (authentic == true)
                     {
                         Console.WriteLine("Authenticated!");
                         DirectoryInfo local = new DirectoryInfo($@"E:\{username}-local");
@@ -43,35 +43,48 @@ public class SyncApplication
                     else
                     {
                         Console.WriteLine("Incorrect password. Please try again.");
-                        goto pw;
+                        loginAttempts++;
                     }
 
                 }
                 else
                 {
-                    Console.WriteLine("Username not found. Please create a new account. What would you like your username to be?");
-                    string newUser = Console.ReadLine();
-                    Console.WriteLine($"Your username is now {newUser}! Please enter a password.");
-                    string newPass = Console.ReadLine();
-                    string passwordHash = PasswordHash.HashPassword(newPass);
-                
-                    var user = new Credentials
-                    {
-                        Username = newUser,
-                        Password = passwordHash,
-                    };
-                    users.Insert(user);
+                    Console.WriteLine("Username not found. Would you like to create a new account Y/N?");
+                    var YN = Console.ReadLine();
 
-                    string newLocal = $@"E:\{newUser}-local";
-                    string newServer = $@"E:\{newUser}-server";
-                    Directory.CreateDirectory(newLocal);
-                    Directory.CreateDirectory(newServer);
-                    Console.WriteLine("Account created! Returning you to login~");
-                    goto log;
+                    if (YN == "y")
+                    {
+                        Console.WriteLine("Please enter the username your desired username.");
+                        string newUser = Console.ReadLine();
+                        Console.WriteLine($"Your username is now {newUser}! Please enter a password.");
+                        string newPass = Console.ReadLine();
+                        string passwordHash = PasswordHash.HashPassword(newPass);
+
+                        var user = new Credentials
+                        {
+                            Username = newUser,
+                            Password = passwordHash,
+                        };
+                        users.Insert(user);
+
+                        string newLocal = $@"E:\{newUser}-local";
+                        string newServer = $@"E:\{newUser}-server";
+                        Directory.CreateDirectory(newLocal);
+                        Directory.CreateDirectory(newServer);
+                        Console.WriteLine("Account created! Returning you to login~");
+                    }
+                    else
+                        Console.WriteLine("Returning to login...");
+                        loginAttempts++;
                 }
 
+            }
+
         }
-    }
+        Console.WriteLine("Login attempts exceeded. Please try again later.");
+        Console.WriteLine("Press any key to terminate the program.");
+        Console.ReadLine();
+    } 
 }
 
 

@@ -34,6 +34,8 @@ public class SyncUp
             Console.WriteLine("Timer started!");
             Console.WriteLine("Press the Enter key to exit the program at any time...");
             Console.ReadLine();
+            System.Environment.Exit(1);
+
     }
     
 

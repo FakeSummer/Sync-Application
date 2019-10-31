@@ -38,11 +38,12 @@ public class Credentials
             if (result.IsSuccessStatusCode)
             {
                 Console.WriteLine("Login success!");
-                string newLocal = $@"E:\{user}-local";
-                Directory.CreateDirectory(newLocal);
+                string newLocal = $@".\{user}-local";
+                var localDirectory = Directory.CreateDirectory(newLocal);
                 var guidResult = await result.Content.ReadAsStringAsync();
                 User.Id = guidResult;
-                //DirectorySync(user, guidResult);  -- WIP
+                var sync = new SyncUp(localDirectory, guidResult);
+                sync.StartTimer();
                 break;
             }
                 Console.WriteLine("Login attempt failed. Please try again.");

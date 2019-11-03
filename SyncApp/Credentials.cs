@@ -30,6 +30,8 @@ public class Credentials
                 Password = pass
             };
 
+            // JSON payload and HTTP routing for authentication check
+
             var httpClient = new HttpClient();
             var payload = JsonConvert.SerializeObject(User);
             var content = new StringContent(payload, Encoding.UTF8, "application/json");

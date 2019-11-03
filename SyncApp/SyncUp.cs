@@ -44,7 +44,7 @@ public class SyncUp
     }
 
 
-    // File Copy
+    // File Copy (Creates list of local file names, paths, lm dates, and created dates)
 
     public async Task CopyAll(DirectoryInfo source)
     {
@@ -88,6 +88,8 @@ public class SyncUp
                 }*/
 
             }
+
+        // JSON payload and HTTP routing
 
         var httpClient = new HttpClient();
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken);
